@@ -1,0 +1,121 @@
+import java.io.*;
+import java.util.Scanner;
+
+class TextEditor {
+    private StringBuilder textContent;
+    private String fileName;
+    private boolean isSaved;
+
+    public TextEditor() {
+        textContent = new StringBuilder();
+        isSaved = false;
+    }
+
+    public void createNewFile(String fileName) {
+        this.fileName = fileName;
+        textContent.setLength(0);
+        isSaved = false;
+        System.out.println("New file created: " + fileName);
+    }
+
+    public void openFile(String fileName) {
+        this.fileName = fileName;
+        textContent.setLength(0);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                textContent.append(line).append("\n");
+            }
+
+            System.out.println("File opened successfully.");
+
+        } catch (IOException e) {
+            System.out.println("Error opening file.");
+        }
+    }
+
+    public void editText(String text) {
+        textContent.append(text).append("\n");
+        isSaved = false;
+    }
+
+    public void displayText() {
+        System.out.println("\n----- FILE CONTENT -----");
+        System.out.println(textContent);
+    }
+
+    public void saveFile() {
+        try (FileWriter writer = new FileWriter(fileName)) {
+            writer.write(textContent.toString());
+            isSaved = true;
+            System.out.println("File saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Error saving file.");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        TextEditor editor = new TextEditor();
+
+        int choice;
+
+        do {
+            System.out.println("\n===== SIMPLE TEXT EDITOR =====");
+            System.out.println("1. Create New File");
+            System.out.println("2. Open Existing File");
+            System.out.println("3. Add Text");
+            System.out.println("4. Display Text");
+            System.out.println("5. Save File");
+            System.out.println("6. Exit");
+            System.out.print("Enter Choice: ");
+
+            choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+
+                case 1:
+                    System.out.print("Enter file name: ");
+                    String newFile = sc.nextLine();
+                    editor.createNewFile(newFile);
+                    break;
+
+                case 2:
+                    System.out.print("Enter file name to open: ");
+                    String openFile = sc.nextLine();
+                    editor.openFile(openFile);
+                    break;
+
+                case 3:
+                    System.out.print("Enter text: ");
+                    String text = sc.nextLine();
+                    editor.editText(text);
+                    break;
+
+                case 4:
+                    editor.displayText();
+                    break;
+
+                case 5:
+                    editor.saveFile();
+                    break;
+
+                case 6:
+                    System.out.println("Program Closed.");
+                    break;
+
+                default:
+                    System.out.println("Invalid Choice!");
+            }
+
+        } while (choice != 6);
+
+        sc.close();
+    }
+}
